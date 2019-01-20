@@ -9,6 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/afrontend/fp-snake-game.git"
   },
+  "homepage" : "https://afrontend.github.io/game/fp-snake-game",
   "keywords": [
     "game",
     "javascript",
