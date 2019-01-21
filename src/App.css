@@ -13,9 +13,13 @@
 
 .App .block {
   border-radius: 5px;
-  border: 3px solid white;
+  border: 2px solid white;
   box-sizing: border-box;
+  font-size: 1.3em;
+  font-weight: bold;
   height: 52px;
+  line-height: 52px;
+  text-align: center;
   width: 50px;
 }
 

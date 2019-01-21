@@ -70,7 +70,7 @@ const isBlank = item => {
   return item && item.color === CONFIG.color ? true : false;
 };
 const isNotBlank = item => (item.color !== CONFIG.color);
-const isOverlapItem = (bg, tool) => ((isNotBlank(bg) && isNotBlank(tool)) ? true : false);
+const isOverlapItem = (apple, snake) => ((isNotBlank(apple) && isNotBlank(snake)) ? true : false);
 const isOverlap = (applePanel, snakePanel) => {
   return _.some(
     _.zipWith(
@@ -130,27 +130,40 @@ const moveSnakeAndAddTail = _.flow([
   justPaintSnake
 ]);
 
+const getSnake = _.flow([
+  convert1DimAry,
+  fp.filter(isNotBlank),
+]);
+
+const addCount = ({ applePanel, snakePanel }) => {
+  _.last(_.last(applePanel)).count = getSnake(snakePanel).length;
+  return {
+    applePanel,
+    snakePanel
+  };
+}
+
 const updatePanel = ({ applePanel, snakePanel }) => {
   const tempSnakePanel = nextItemIsOutOfRange(snakePanel, getHeadItem(snakePanel).key)
     ? snakePanel
     : moveSnake(snakePanel);
   const overlap = isOverlap(applePanel, tempSnakePanel);
   const newApplePanel = overlap ? createApplePanel() : applePanel;
-  return {
+  const newSnakePanel = overlap ? moveSnakeAndAddTail(snakePanel) : tempSnakePanel;
+  return addCount({
     applePanel: newApplePanel,
-    snakePanel: overlap
-    ? moveSnakeAndAddTail(snakePanel)
-    : tempSnakePanel
-  };
+    snakePanel: newSnakePanel
+  });
 };
 
-const zipPanelItem = (bg, tool) => (isBlank(tool) ? bg : tool);
-
+const zipPanelItem = (apple, snake) => (isBlank(snake) ? apple : snake);
 const assignPanel = ({ applePanel, snakePanel }) => {
-  return convert2DimAry(_.zipWith(
-    convert1DimAry(applePanel),
-    convert1DimAry(snakePanel),
-    zipPanelItem));
+  return convert2DimAry(
+    _.zipWith(
+      convert1DimAry(applePanel),
+      convert1DimAry(snakePanel),
+      zipPanelItem)
+  );
 };
 
 const getWindow = _.flow([assignPanel, convert1DimAry]);
@@ -217,13 +230,15 @@ const processKey = _.flow([validKey, storeKey]);
 const createBlocks = ary => (
   ary.map(
     (item, index) => (
-      <Block color={item.color} row={item.row} column={item.column} key={index} />
+      <Block color={item.color} row={item.row} column={item.column} key={index}>
+        {item.count}
+      </Block>
     )
   )
 );
 
 const Block = props => (
-  <div className="block" style={{backgroundColor: props.color}}></div>
+  <div className="block" style={{backgroundColor: props.color}}>{props.children}</div>
 );
 const Blocks = props => (createBlocks(props.window));
 
