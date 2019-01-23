@@ -10,7 +10,7 @@ const CONFIG = {
   rows: 15,
   columns: 15,
   color: 'grey',
-  tickTime: 300,
+  tickTime: 200,
   appleColor: 'red',
   snakeColor: 'orange'
 };
