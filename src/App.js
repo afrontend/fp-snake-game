@@ -144,9 +144,8 @@ const addCount = ({ applePanel, snakePanel }) => {
 }
 
 const updatePanel = ({ applePanel, snakePanel }) => {
-  const tempSnakePanel = nextItemIsOutOfRange(snakePanel, getHeadItem(snakePanel).key)
-    ? snakePanel
-    : moveSnake(snakePanel);
+  const outOfRange = nextItemIsOutOfRange(snakePanel, getHeadItem(snakePanel).key)
+  const tempSnakePanel = outOfRange ? createSnakePanel() : moveSnake(snakePanel);
   const overlap = isOverlap(applePanel, tempSnakePanel);
   const newApplePanel = overlap ? createApplePanel() : applePanel;
   const newSnakePanel = overlap ? moveSnakeAndAddTail(snakePanel) : tempSnakePanel;
