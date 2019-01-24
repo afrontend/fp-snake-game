@@ -10,7 +10,7 @@ const CONFIG = {
   rows: 15,
   columns: 15,
   color: 'grey',
-  tickTime: 200,
+  tickTime: 250,
   appleColor: 'red',
   snakeColor: 'orange'
 };
@@ -145,7 +145,7 @@ const addCount = ({ applePanel, snakePanel }) => {
 
 const updatePanel = ({ applePanel, snakePanel }) => {
   const outOfRange = nextItemIsOutOfRange(snakePanel, getHeadItem(snakePanel).key)
-  const tempSnakePanel = outOfRange ? createSnakePanel() : moveSnake(snakePanel);
+  const tempSnakePanel = outOfRange ? snakePanel : moveSnake(snakePanel);
   const overlap = isOverlap(applePanel, tempSnakePanel);
   const newApplePanel = overlap ? createApplePanel() : applePanel;
   const newSnakePanel = overlap ? moveSnakeAndAddTail(snakePanel) : tempSnakePanel;
