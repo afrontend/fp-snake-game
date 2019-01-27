@@ -1,3 +1,9 @@
+/*
+JavaScript Snake
+By Bob Hwang
+https://github.com/afrontend/fp-snake-game
+*/
+
 import React, { Component } from 'react';
 import _ from 'lodash';
 import fp from 'lodash/fp';
