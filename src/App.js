@@ -44,15 +44,15 @@ const paint = (panel, posAry, color) => {
 
 const paintApple = panel => {
   return paint(panel, [{
-      row: _.random(0, CONFIG.rows - 1),
-      column: _.random(0, CONFIG.columns - 1)
+      row: _.random(0, panel.length - 1),
+      column: _.random(0, panel[0].length - 1)
     }], CONFIG.appleColor);
 };
 
 const paintSnake = panel => {
   return paint(panel, [{
-      row: _.random(0, CONFIG.rows - 1),
-      column: _.random(0, CONFIG.columns - 1),
+      row: _.random(0, panel.length - 1),
+      column: _.random(0, panel[0].length - 1),
       key: 0
     }], CONFIG.snakeColor);
 };
