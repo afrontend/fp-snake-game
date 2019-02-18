@@ -7,7 +7,6 @@ export const CONFIG = {
   rows: 15,
   columns: 15,
   color: 'grey',
-  tickTime: 250,
   appleColor: 'red',
   snakeColor: 'orange'
 };

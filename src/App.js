@@ -6,7 +6,13 @@ https://github.com/afrontend/fp-snake-game
 
 import React, { Component } from 'react';
 import * as keyboard from 'keyboard-handler';
-import { CONFIG, createApplePanel, createSnakePanel, updatePanel, processKey, getWindow } from './fp-snake';
+import {
+  createApplePanel,
+  createSnakePanel,
+  updatePanel,
+  processKey,
+  getWindow
+} from './fp-snake';
 import './App.css';
 
 // components
@@ -21,9 +27,7 @@ const createBlocks = ary => (
   )
 );
 
-const Block = props => (
-  <div className="block" style={{backgroundColor: props.color}}>{props.children}</div>
-);
+const Block = props => (<div className="block" style={{backgroundColor: props.color}}>{props.children}</div>);
 const Blocks = props => (createBlocks(props.window));
 
 class App extends Component {
@@ -41,7 +45,7 @@ class App extends Component {
           snakePanel: state.snakePanel
         });
       });
-    }, CONFIG.tickTime);
+    }, 250);
 
     keyboard.keyPressed(e => {
       setTimeout(() => {
