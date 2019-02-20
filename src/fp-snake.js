@@ -3,7 +3,7 @@ import fp from 'lodash/fp';
 
 // configuration
 
-export const CONFIG = {
+const CONFIG = {
   rows: 15,
   columns: 15,
   color: 'grey',
@@ -87,8 +87,8 @@ const paintSnake = panel => {
     }], CONFIG.snakeColor);
 };
 
-export const createApplePanel = _.flow([createPanel, paintApple]);
-export const createSnakePanel = _.flow([createPanel, paintSnake]);
+const createApplePanel = _.flow([createPanel, paintApple]);
+const createSnakePanel = _.flow([createPanel, paintSnake]);
 
 // for snake
 
@@ -142,7 +142,7 @@ const addCount = ({ applePanel, snakePanel }) => {
   };
 }
 
-export const updatePanel = ({ applePanel, snakePanel }) => {
+const updatePanel = ({ applePanel, snakePanel }) => {
   const outOfRange = nextItemIsOutOfRange(snakePanel, getHeadItem(snakePanel).key)
   const tempSnakePanel = outOfRange ? snakePanel : moveSnake(snakePanel);
   const overlap = isOverlap(applePanel, tempSnakePanel);
@@ -222,5 +222,22 @@ const storeKey = ({ applePanel, snakePanel, key }) => (
 );
 
 export const processKey = _.flow([validKey, storeKey]);
+
+export const initSnakeTable = () => (
+  {
+    applePanel: createApplePanel(),
+    snakePanel: createSnakePanel()
+  }
+)
+
+export const moveSnakeTable = (state) => (updatePanel({ applePanel: state.applePanel, snakePanel: state.snakePanel }));
+
+export const keySnakeTable = (key, state) => (processKey({
+  applePanel: state.applePanel,
+  snakePanel: state.snakePanel,
+  key
+}));
+
+export const joinSnakeTable = (state) => (getWindow({ applePanel: state.applePanel, snakePanel: state.snakePanel }));
 
 export default {};

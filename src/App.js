@@ -7,15 +7,12 @@ https://github.com/afrontend/fp-snake-game
 import React, { Component } from 'react';
 import * as keyboard from 'keyboard-handler';
 import {
-  createApplePanel,
-  createSnakePanel,
-  updatePanel,
-  processKey,
-  getWindow
+  initSnakeTable,
+  moveSnakeTable,
+  keySnakeTable,
+  joinSnakeTable
 } from './fp-snake';
 import './App.css';
-
-// components
 
 const createBlocks = ary => (
   ary.map(
@@ -33,29 +30,15 @@ const Blocks = props => (createBlocks(props.window));
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      applePanel: createApplePanel(),
-      snakePanel: createSnakePanel()
-    };
+    this.state = initSnakeTable();
 
     this.state.timer = setInterval(() => {
-      this.setState((state) => {
-        return updatePanel({
-          applePanel: state.applePanel,
-          snakePanel: state.snakePanel
-        });
-      });
+      this.setState((state) => (moveSnakeTable(state)));
     }, 250);
 
     keyboard.keyPressed(e => {
       setTimeout(() => {
-        this.setState((state) => {
-          return processKey({
-            applePanel: state.applePanel,
-            snakePanel: state.snakePanel,
-            key: e.which
-          });
-        });
+        this.setState((state) => (keySnakeTable(e.which, state)));
       });
     });
   }
@@ -64,10 +47,7 @@ class App extends Component {
     return (
       <div className="container">
         <div className="App">
-          <Blocks window={getWindow( {
-            applePanel: this.state.applePanel,
-            snakePanel: this.state.snakePanel
-          })} />
+          <Blocks window={joinSnakeTable(this.state)} />
       </div>
     </div>
     );
