@@ -8,7 +8,7 @@
   display: flex;
   flex-wrap: wrap;
   margin: auto;
-  width: calc(50px * 15 + 2px);
+  width: calc(5vh * 15 + 2px);
 }
 
 .App .block {
@@ -17,10 +17,10 @@
   box-sizing: border-box;
   font-size: 1.3em;
   font-weight: bold;
-  height: 52px;
-  line-height: 52px;
+  height: calc(5vh + 2px);
+  line-height: calc(5vh + 2px);
   text-align: center;
-  width: 50px;
+  width: 5vh;
 }
 
 .logo {
