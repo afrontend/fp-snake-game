@@ -9,13 +9,13 @@
 * [lodash](https://lodash.com/)
 * [react](https://reactjs.org/)
 
-# Install
+# Installation
 
     git clone https://github.com/afrontend/fp-snake-game
     cd fp-snake-game
     npm install
 
-# Run
+# Usage
 
     npm start
 
