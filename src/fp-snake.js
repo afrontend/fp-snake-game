@@ -1,23 +1,15 @@
-/*
-JavaScript Snake
-By Bob Hwang
-https://github.com/afrontend/fp-snake-game
-*/
-
 import _ from 'lodash';
 import fp from 'lodash/fp';
 
 // configuration
 
-const CONFIG = {
-  rows: 15,
-  columns: 15,
+const GLOBAL = {
   color: 'grey',
   appleColor: 'red',
   snakeColor: 'orange'
 };
 
-// util
+// panel functions
 
 const getAry = (len, fn) => (
   _.range(len).map(() => (
@@ -25,26 +17,38 @@ const getAry = (len, fn) => (
     ? (
       _.isFunction(fn)
       ? fn()
-      : fn )
+      : _.cloneDeep(fn) )
     : null)
   ));
 
-const convert1DimAry = _.flattenDepth;
-const convert2DimAry = fp.chunk(CONFIG.columns);
-const matchKey = (akey, bkey) => (akey === bkey ? 1 : 0);
-const isBlank = item => {
-  return item && item.color === CONFIG.color ? true : false;
-};
-const isNotBlank = item => (item.color !== CONFIG.color);
+const createItem = () => ({ color: GLOBAL.color });
+const getEmptyRow = (columns) => (getAry(columns, createItem()));
+const createPanel = (() => {
+  let savedRows = 0;
+  let savedColumns = 0;
+  return (rows, columns) => {
+    savedRows = rows ? rows : savedRows;
+    savedColumns = columns ? columns : savedColumns;
+    return getAry(savedRows, getEmptyRow(savedColumns));
+  };
+})();
+
+const to1DimAry = _.flattenDepth;
+
+// check a panel
+
+const isBlank = item => (item.color === GLOBAL.color);
+const isNotBlank = item => (item.color !== GLOBAL.color);
 const isOverlapItem = (apple, snake) => ((isNotBlank(apple) && isNotBlank(snake)) ? true : false);
 const isOverlap = (applePanel, snakePanel) => {
   return _.some(
     _.zipWith(
-      convert1DimAry(applePanel),
-      convert1DimAry(snakePanel),
+      to1DimAry(applePanel),
+      to1DimAry(snakePanel),
       isOverlapItem),
     fp.isEqual(true));
 };
+const matchKey = (akey, bkey) => (akey === bkey ? 1 : 0);
 
 // key definition
 
@@ -54,10 +58,6 @@ const RIGHT = 39;
 const DOWN = 40;
 
 // create panel
-
-const createItem = () => ({ color: CONFIG.color });
-const getEmptyRow = () => (getAry(CONFIG.columns, createItem));
-const createPanel = () => (getAry(CONFIG.rows, getEmptyRow));
 
 const getNewRowColumn = (headItem, key) => ({
   row: headItem.row - matchKey(key, UP) + matchKey(key, DOWN),
@@ -82,7 +82,7 @@ const paintApple = panel => {
   return paint(panel, [{
       row: _.random(0, panel.length - 1),
       column: _.random(0, panel[0].length - 1)
-    }], CONFIG.appleColor);
+    }], GLOBAL.appleColor);
 };
 
 const paintSnake = panel => {
@@ -90,11 +90,28 @@ const paintSnake = panel => {
       row: _.random(0, panel.length - 1),
       column: _.random(0, panel[0].length - 1),
       key: 0
-    }], CONFIG.snakeColor);
+    }], GLOBAL.snakeColor);
 };
 
-const createApplePanel = _.flow([createPanel, paintApple]);
-const createSnakePanel = _.flow([createPanel, paintSnake]);
+const createApplePanel = (() => {
+  let savedRows = 0;
+  let savedColumns = 0;
+  return (rows, columns) => {
+    savedRows = rows ? rows : savedRows;
+    savedColumns = columns ? columns : savedColumns;
+    return paintApple(createPanel(savedRows, savedColumns));
+  };
+})();
+
+const createSnakePanel = (() => {
+  let savedRows = 0;
+  let savedColumns = 0;
+  return (rows, columns) => {
+    savedRows = rows ? rows : savedRows;
+    savedColumns = columns ? columns : savedColumns;
+    return paintSnake(createPanel(savedRows, savedColumns));
+  };
+})();
 
 // for snake
 
@@ -114,10 +131,10 @@ const reIndexing = ary => {
   });
 };
 
-const justPaintSnake = posAry => (paint(createPanel(), posAry, CONFIG.snakeColor));
+const justPaintSnake = posAry => (paint(createPanel(), posAry, GLOBAL.snakeColor));
 
 const moveSnake = _.flow([
-  convert1DimAry,
+  to1DimAry,
   fp.filter(isNotBlank),
   fp.sortBy('index'),
   addHeadItem,
@@ -127,7 +144,7 @@ const moveSnake = _.flow([
 ]);
 
 const moveSnakeAndAddTail = _.flow([
-  convert1DimAry,
+  to1DimAry,
   fp.filter(isNotBlank),
   fp.sortBy('index'),
   addHeadItem,
@@ -136,7 +153,7 @@ const moveSnakeAndAddTail = _.flow([
 ]);
 
 const getSnake = _.flow([
-  convert1DimAry,
+  to1DimAry,
   fp.filter(isNotBlank),
 ]);
 
@@ -162,21 +179,22 @@ const updatePanel = ({ applePanel, snakePanel }) => {
 
 const zipPanelItem = (apple, snake) => (isBlank(snake) ? apple : snake);
 const assignPanel = ({ applePanel, snakePanel }) => {
-  return convert2DimAry(
+  const columns = applePanel[0].length;
+  return _.chunk(
     _.zipWith(
-      convert1DimAry(applePanel),
-      convert1DimAry(snakePanel),
+      to1DimAry(applePanel),
+      to1DimAry(snakePanel),
       zipPanelItem)
-  );
+    , columns);
 };
 
-export const getWindow = _.flow([assignPanel, convert1DimAry]);
+export const getWindow = _.flow([assignPanel, to1DimAry]);
 
 // check functions
 
 const getHeadItem = _.flow([
   _.cloneDeep,
-  convert1DimAry,
+  to1DimAry,
   fp.filter(isNotBlank),
   fp.sortBy('index'),
   _.head
@@ -229,12 +247,10 @@ const storeKey = ({ applePanel, snakePanel, key }) => (
 
 export const processKey = _.flow([validKey, storeKey]);
 
-export const initSnakeTable = () => (
-  {
-    applePanel: createApplePanel(),
-    snakePanel: createSnakePanel()
-  }
-)
+export const initSnakeTable = (rows = 15, columns = 15) => ({
+  applePanel: createApplePanel(rows, columns),
+  snakePanel: createSnakePanel(rows, columns)
+});
 
 export const moveSnakeTable = (state) => (updatePanel({ applePanel: state.applePanel, snakePanel: state.snakePanel }));
 
