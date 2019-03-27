@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/afrontend/fp-snake-game.git"
   },
-  "homepage" : "https://afrontend.github.io/game/fp-snake-game",
+  "homepage": "https://afrontend.github.io/game/fp-snake-game",
   "keywords": [
     "game",
     "javascript",
@@ -24,6 +24,7 @@
   },
   "private": true,
   "dependencies": {
+    "fp-snake": "0.0.2",
     "keyboard-handler": "^2.0.0",
     "lodash": "^4.17.11",
     "react": "^16.7.0",
