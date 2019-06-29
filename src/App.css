@@ -8,19 +8,16 @@
   display: flex;
   flex-wrap: wrap;
   margin: auto;
-  width: calc(5vh * 15 + 2px);
+  width: calc(3vh * 15 + 2px);
 }
 
 .App .block {
-  border-radius: 5px;
-  border: 2px solid white;
-  box-sizing: border-box;
   font-size: 3vh;
   font-weight: bold;
-  height: calc(5vh + 2px);
-  line-height: calc(5vh + 2px);
+  height: calc(3vh + 2px);
+  line-height: calc(3vh + 2px);
   text-align: center;
-  width: 5vh;
+  width: 3vh;
 }
 
 .logo {

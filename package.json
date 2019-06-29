@@ -13,8 +13,6 @@
   "keywords": [
     "game",
     "javascript",
-    "lodash",
-    "react",
     "snake"
   ],
   "author": "<frontend.wordpress@gmail.com>",
@@ -24,7 +22,7 @@
   },
   "private": true,
   "dependencies": {
-    "fp-snake": "0.0.2",
+    "fp-snake": "0.0.5",
     "keyboard-handler": "^2.0.0",
     "lodash": "^4.17.11",
     "react": "^16.7.0",
