@@ -9,13 +9,13 @@
     "type": "git",
     "url": "git+https://github.com/afrontend/fp-snake-game.git"
   },
-  "homepage": "https://afrontend.github.io/game/fp-snake-game",
+  "homepage": "https://afrontend.github.io/fp-snake-game",
   "keywords": [
     "game",
     "javascript",
     "snake"
   ],
-  "author": "<frontend.wordpress@gmail.com>",
+  "author": "<autoscripts@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/afrontend/fp-snake-game/issues"
@@ -33,7 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,5 +45,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "gh-pages": "^2.2.0"
+  }
 }
