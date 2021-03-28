@@ -23,4 +23,4 @@
 
 # Web
 
-https://afrontend.github.io/game/fp-snake-game/
+https://afrontend.github.io/fp-snake-game/
