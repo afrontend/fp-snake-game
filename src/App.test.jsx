@@ -3,12 +3,11 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App, { getArgs, getKeySymbol } from './App';
 
-jest.mock('keyboard-handler', () => ({
-  keyPressed: jest.fn(),
+vi.mock('keyboard-handler', () => ({
+  keyPressed: vi.fn(),
 }));
 
-jest.mock('fp-snake', () => ({
-  __esModule: true,
+vi.mock('fp-snake', () => ({
   default: {
     init: () => ({}),
     tick: state => state,
@@ -61,11 +60,11 @@ describe('getKeySymbol', () => {
 
 describe('App', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('렌더링이 정상적으로 이루어진다', () => {
@@ -75,7 +74,7 @@ describe('App', () => {
   });
 
   it('언마운트 시 타이머를 정리한다', () => {
-    const clearIntervalSpy = jest.spyOn(window, 'clearInterval');
+    const clearIntervalSpy = vi.spyOn(window, 'clearInterval');
     const { unmount } = render(<App />);
     unmount();
     expect(clearIntervalSpy).toHaveBeenCalled();
