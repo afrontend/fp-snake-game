@@ -1,7 +1,9 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import App, { getArgs, getKeySymbol } from './App';
+import * as keyboard from 'keyboard-handler';
+import fpSnake from 'fp-snake';
 
 vi.mock('keyboard-handler', () => ({
   keyPressed: vi.fn(),
@@ -46,6 +48,9 @@ describe('getKeySymbol', () => {
     [38, 'up'],
     [39, 'right'],
     [40, 'down'],
+    [83, 'save'],
+    [76, 'load'],
+    [72, 'help'],
   ])('키코드 %i는 %s를 반환한다', (keyCode, symbol) => {
     expect(getKeySymbol(keyCode)).toBe(symbol);
   });
@@ -79,5 +84,56 @@ describe('App', () => {
     unmount();
     expect(clearIntervalSpy).toHaveBeenCalled();
     clearIntervalSpy.mockRestore();
+  });
+});
+
+// ─── 키보드 동작 ──────────────────────────────────────────────────────────────
+
+describe('키보드 동작', () => {
+  let triggerKey;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    keyboard.keyPressed.mockImplementation(cb => { triggerKey = cb; });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    keyboard.keyPressed.mockReset();
+  });
+
+  it('h 키를 누르면 도움말 오버레이가 표시된다', () => {
+    render(<App />);
+    expect(document.querySelector('.help-overlay')).not.toBeInTheDocument();
+    act(() => triggerKey({ which: 72 }));
+    expect(document.querySelector('.help-overlay')).toBeInTheDocument();
+  });
+
+  it('h 키를 두 번 누르면 도움말이 닫힌다', () => {
+    render(<App />);
+    act(() => { triggerKey({ which: 72 }); triggerKey({ which: 72 }); });
+    expect(document.querySelector('.help-overlay')).not.toBeInTheDocument();
+  });
+
+  it('도움말이 열려 있는 동안 게임 tick이 실행되지 않는다', () => {
+    const tickSpy = vi.spyOn(fpSnake, 'tick');
+    render(<App />);
+    act(() => triggerKey({ which: 72 }));
+    tickSpy.mockClear();
+    act(() => vi.advanceTimersByTime(1000));
+    expect(tickSpy).not.toHaveBeenCalled();
+    tickSpy.mockRestore();
+  });
+
+  it('저장 없이 l 키를 눌러도 오류가 없다', () => {
+    render(<App />);
+    expect(() => act(() => { triggerKey({ which: 76 }); vi.advanceTimersByTime(0); })).not.toThrow();
+  });
+
+  it('s 키로 저장하고 l 키로 불러올 수 있다', () => {
+    render(<App />);
+    act(() => { triggerKey({ which: 83 }); vi.advanceTimersByTime(0); });
+    act(() => { triggerKey({ which: 76 }); vi.advanceTimersByTime(0); });
+    expect(document.querySelector('.App')).toBeInTheDocument();
   });
 });

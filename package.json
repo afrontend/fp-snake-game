@@ -19,20 +19,20 @@
   },
   "private": true,
   "dependencies": {
-    "fp-snake": "^0.0.8",
-    "keyboard-handler": "^2.0.0",
+    "fp-snake": "^0.0.10",
+    "keyboard-handler": "^3.0.7",
     "lodash": "^4.18.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^6.0.2",
     "gh-pages": "^6.3.0",
-    "jsdom": "^29.0.2",
-    "vite": "^8.0.9",
-    "vitest": "^4.1.5"
+    "jsdom": "^29.1.1",
+    "vite": "^8.0.14",
+    "vitest": "^4.1.7"
   },
   "scripts": {
     "start": "vite",

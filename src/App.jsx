@@ -9,6 +9,9 @@ const LEFT = 37;
 const UP = 38;
 const RIGHT = 39;
 const DOWN = 40;
+const S_KEY = 83;
+const L_KEY = 76;
+const H_KEY = 72;
 
 const GAME_TICK_INTERVAL = 250;
 
@@ -18,6 +21,17 @@ const KEY_LIST = [
   { keyValue: UP,    keySymbol: 'up'    },
   { keyValue: RIGHT, keySymbol: 'right' },
   { keyValue: DOWN,  keySymbol: 'down'  },
+  { keyValue: S_KEY, keySymbol: 'save'  },
+  { keyValue: L_KEY, keySymbol: 'load'  },
+  { keyValue: H_KEY, keySymbol: 'help'  },
+];
+
+const HELP_ITEMS = [
+  { key: '← ↑ → ↓', action: '이동' },
+  { key: 'Space',    action: '일시정지 / 재개' },
+  { key: 'S',        action: '상태 저장' },
+  { key: 'L',        action: '상태 불러오기' },
+  { key: 'H',        action: '도움말 닫기' },
 ];
 
 export const getKeySymbol = (keyValue) => {
@@ -55,18 +69,35 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = fpSnake.init();
+    this.savedState = null;
+    this.showHelp = false;
     this.timer = setInterval(() => {
-      this.setState(state => fpSnake.tick(state));
+      if (!this.showHelp) {
+        this.setState(state => fpSnake.tick(state));
+      }
     }, GAME_TICK_INTERVAL);
 
     // setTimeout 없이 setState를 호출하면 keyPressed 이벤트 핸들러와
     // React의 배치 업데이트가 충돌할 수 있어 비동기로 처리한다.
     keyboard.keyPressed(e => {
+      const symbol = getKeySymbol(e.which);
+      if (symbol === 'help') {
+        this.showHelp = !this.showHelp;
+        this.forceUpdate();
+        return;
+      }
       setTimeout(() => {
-        this.setState(state => {
-          const symbol = getKeySymbol(e.which);
-          return symbol ? fpSnake.key(symbol, state) : state;
-        });
+        if (symbol === 'save') {
+          this.savedState = structuredClone(this.state);
+        } else if (symbol === 'load') {
+          if (this.savedState) {
+            this.setState(structuredClone(this.savedState));
+          }
+        } else {
+          this.setState(state => {
+            return symbol ? fpSnake.key(symbol, state) : state;
+          });
+        }
       });
     });
   }
@@ -103,6 +134,20 @@ class App extends Component {
     return (
       <div className="container">
         <div className="App">
+          {this.showHelp && (
+            <div className="help-overlay" role="dialog" aria-label="도움말">
+              <table>
+                <tbody>
+                  {HELP_ITEMS.map(({ key, action }) => (
+                    <tr key={key}>
+                      <td>{key}</td>
+                      <td>{action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           <Blocks items={_.flatten(fpSnake.join(this.state))} />
         </div>
       </div>
