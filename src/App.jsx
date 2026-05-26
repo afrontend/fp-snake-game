@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import * as keyboard from 'keyboard-handler';
-import _ from 'lodash';
 import './App.css';
 import fpSnake from 'fp-snake';
 
@@ -35,7 +34,7 @@ const HELP_ITEMS = [
 ];
 
 export const getKeySymbol = (keyValue) => {
-  const found = _.find(KEY_LIST, key => key.keyValue === keyValue);
+  const found = KEY_LIST.find(key => key.keyValue === keyValue);
   return found ? found.keySymbol : null;
 };
 
@@ -113,17 +112,17 @@ class App extends Component {
       <div style={{ columns: '400px 3' }}>
         <div className="container">
           <div className="App">
-            <Blocks items={_.flatten(layer0)} />
+            <Blocks items={layer0.flat()} />
           </div>
         </div>
         <div className="container">
           <div className="App">
-            <Blocks items={_.flatten(layer1)} />
+            <Blocks items={layer1.flat()} />
           </div>
         </div>
         <div className="container">
           <div className="App">
-            <Blocks items={_.flatten(joined)} />
+            <Blocks items={joined.flat()} />
           </div>
         </div>
       </div>
@@ -148,7 +147,7 @@ class App extends Component {
               </table>
             </div>
           )}
-          <Blocks items={_.flatten(fpSnake.join(this.state))} />
+          <Blocks items={fpSnake.join(this.state).flat()} />
         </div>
       </div>
     );
