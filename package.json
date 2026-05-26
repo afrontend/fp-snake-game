@@ -1,6 +1,6 @@
 {
   "name": "fp-snake-game",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "자바스크립트로 만든 snake 게임",
   "repository": {
     "type": "git",
