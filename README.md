@@ -6,10 +6,14 @@
 [블로그](https://agvim.wordpress.com/2019/01/22/snake-game-with-javascript/)에서 간단한 설명을 볼 수 있으며 아래 라이브러리를 사용했다.
 
 * [fp-snake](https://www.npmjs.com/package/fp-snake)
-* [vite](https://vitejs.dev/)
+* [vite](https://vite.dev/)
 * [keyboard-handler](https://github.com/emiljohansson/keyboard-handler)
 * [lodash](https://lodash.com/)
 * [react](https://react.dev/)
+
+# Debug Mode
+
+URL에 `?debug=true` 쿼리 파라미터를 추가하면 디버그 모드로 실행된다.
 
 # Installation
 
@@ -29,14 +33,17 @@
 
     npm run build
 
+# Preview
+
+    npm run preview
+
 # Deploy
 
     npm run deploy
 
-# Debug Mode
-
-URL에 `?debug=true` 쿼리 파라미터를 추가하면 디버그 모드로 실행된다.
-
 # Web
 
 https://afrontend.github.io/fp-snake-game/
+
+# License
+MIT © [Bob Hwang](https://afrontend.github.io)
