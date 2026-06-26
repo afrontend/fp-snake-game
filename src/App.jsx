@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
 import * as keyboard from 'keyboard-handler';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import fpSnake from 'fp-snake';
 
@@ -108,51 +108,47 @@ function App() {
     });
   }, []);
 
-  if (args.debug) {
-    const [layer0, layer1] = fpSnake.toArray(gameState);
-    const joined = fpSnake.join(gameState);
-    return (
+  return args.debug
+    ? (
       <div style={{ columns: '400px 3' }}>
         <div className="container">
           <div className="App">
-            <Blocks blocks={layer0.flat()} />
+            <Blocks blocks={fpSnake.toArray(gameState)[0].flat()} />
           </div>
         </div>
         <div className="container">
           <div className="App">
-            <Blocks blocks={layer1.flat()} />
+            <Blocks blocks={fpSnake.toArray(gameState)[1].flat()} />
           </div>
         </div>
         <div className="container">
           <div className="App">
-            <Blocks blocks={joined.flat()} />
+            <Blocks blocks={fpSnake.join(gameState).flat()} />
           </div>
+        </div>
+      </div>
+    )
+    : (
+      <div className="container">
+        <div className="App">
+          {showHelp && (
+            <div className="help-overlay" role="dialog" aria-label="도움말">
+              <table>
+                <tbody>
+                  {HELP_ITEMS.map(({ key, action }) => (
+                    <tr key={key}>
+                      <td>{key}</td>
+                      <td>{action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <Blocks blocks={fpSnake.join(gameState).flat()} />
         </div>
       </div>
     );
-  }
-
-  return (
-    <div className="container">
-      <div className="App">
-        {showHelp && (
-          <div className="help-overlay" role="dialog" aria-label="도움말">
-            <table>
-              <tbody>
-                {HELP_ITEMS.map(({ key, action }) => (
-                  <tr key={key}>
-                    <td>{key}</td>
-                    <td>{action}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        <Blocks blocks={fpSnake.join(gameState).flat()} />
-      </div>
-    </div>
-  );
 }
 
 export default App;

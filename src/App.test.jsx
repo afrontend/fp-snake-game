@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import App, { getArgs, getKeySymbol } from './App';
 import * as keyboard from 'keyboard-handler';
 import fpSnake from 'fp-snake';
@@ -11,11 +10,11 @@ vi.mock('keyboard-handler', () => ({
 
 vi.mock('fp-snake', () => ({
   default: {
-    init: () => ({}),
-    tick: state => state,
-    key: (_symbol, state) => state,
-    toArray: _state => [[], []],
-    join: _state => [],
+    init: vi.fn(() => ({})),
+    tick: vi.fn(s => s),
+    key: vi.fn((_symbol, s) => s),
+    toArray: vi.fn(() => [[], []]),
+    join: vi.fn(() => []),
   },
 }));
 
