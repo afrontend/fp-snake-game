@@ -2,8 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: '/fp-snake-game/',
   plugins: [react()],
+  base: '/fp-snake-game/',
   test: {
     environment: 'jsdom',
     globals: true,

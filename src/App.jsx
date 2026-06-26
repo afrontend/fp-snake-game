@@ -1,28 +1,30 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as keyboard from 'keyboard-handler';
 import './App.css';
 import fpSnake from 'fp-snake';
 
-const SPACE = 32;
-const LEFT = 37;
-const UP = 38;
-const RIGHT = 39;
-const DOWN = 40;
-const S_KEY = 83;
-const L_KEY = 76;
-const H_KEY = 72;
+const KEY_CODES = {
+  SPACE: 32,
+  LEFT: 37,
+  UP: 38,
+  RIGHT: 39,
+  DOWN: 40,
+  SAVE: 83,
+  LOAD: 76,
+  HELP: 72,
+};
 
-const GAME_TICK_INTERVAL = 250;
+const TICK_INTERVAL_MS = 250;
 
-const KEY_LIST = [
-  { keyValue: SPACE, keySymbol: 'space' },
-  { keyValue: LEFT,  keySymbol: 'left'  },
-  { keyValue: UP,    keySymbol: 'up'    },
-  { keyValue: RIGHT, keySymbol: 'right' },
-  { keyValue: DOWN,  keySymbol: 'down'  },
-  { keyValue: S_KEY, keySymbol: 'save'  },
-  { keyValue: L_KEY, keySymbol: 'load'  },
-  { keyValue: H_KEY, keySymbol: 'help'  },
+const keyList = [
+  { keyValue: KEY_CODES.SPACE, keySymbol: 'space' },
+  { keyValue: KEY_CODES.LEFT,  keySymbol: 'left'  },
+  { keyValue: KEY_CODES.UP,    keySymbol: 'up'    },
+  { keyValue: KEY_CODES.RIGHT, keySymbol: 'right' },
+  { keyValue: KEY_CODES.DOWN,  keySymbol: 'down'  },
+  { keyValue: KEY_CODES.SAVE,  keySymbol: 'save'  },
+  { keyValue: KEY_CODES.LOAD,  keySymbol: 'load'  },
+  { keyValue: KEY_CODES.HELP,  keySymbol: 'help'  },
 ];
 
 const HELP_ITEMS = [
@@ -34,7 +36,7 @@ const HELP_ITEMS = [
 ];
 
 export const getKeySymbol = (keyValue) => {
-  const found = KEY_LIST.find(key => key.keyValue === keyValue);
+  const found = keyList.find(key => key.keyValue === keyValue);
   return found ? found.keySymbol : null;
 };
 
@@ -57,105 +59,100 @@ const Block = ({ color, children }) => (
   </div>
 );
 
-const Blocks = ({ items }) =>
-  items.map((item, index) => (
+const Blocks = ({ blocks }) =>
+  blocks.map((item, index) => (
     <Block color={item.color} key={index}>
       {item.count}
     </Block>
   ));
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = fpSnake.init();
-    this.savedState = null;
-    this.showHelp = false;
-    this.timer = setInterval(() => {
-      if (!this.showHelp) {
-        this.setState(state => fpSnake.tick(state));
-      }
-    }, GAME_TICK_INTERVAL);
+function App() {
+  const [gameState, setGameState] = useState(() => fpSnake.init());
+  const [showHelp, setShowHelp] = useState(false);
+  const savedState = useRef(null);
+  const showHelpRef = useRef(false);
 
-    // setTimeout 없이 setState를 호출하면 keyPressed 이벤트 핸들러와
-    // React의 배치 업데이트가 충돌할 수 있어 비동기로 처리한다.
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!showHelpRef.current) {
+        setGameState(s => fpSnake.tick(s));
+      }
+    }, TICK_INTERVAL_MS);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     keyboard.keyPressed(e => {
       const symbol = getKeySymbol(e.which);
       if (symbol === 'help') {
-        this.showHelp = !this.showHelp;
-        this.forceUpdate();
+        showHelpRef.current = !showHelpRef.current;
+        setShowHelp(h => !h);
         return;
       }
+      // setTimeout으로 다음 이벤트 루프에서 처리해
+      // 방향키 입력이 setInterval 틱과 겹치지 않도록 함
       setTimeout(() => {
         if (symbol === 'save') {
-          this.savedState = structuredClone(this.state);
+          setGameState(s => {
+            savedState.current = structuredClone(s);
+            return s;
+          });
         } else if (symbol === 'load') {
-          if (this.savedState) {
-            this.setState(structuredClone(this.savedState));
+          if (savedState.current) {
+            setGameState(structuredClone(savedState.current));
           }
         } else {
-          this.setState(state => {
-            return symbol ? fpSnake.key(symbol, state) : state;
-          });
+          setGameState(s => symbol ? fpSnake.key(symbol, s) : s);
         }
       });
     });
-  }
+  }, []);
 
-  componentWillUnmount() {
-    clearInterval(this.timer);
-  }
-
-  renderDebugMode() {
-    const [layer0, layer1] = fpSnake.toArray(this.state);
-    const joined = fpSnake.join(this.state);
+  if (args.debug) {
+    const [layer0, layer1] = fpSnake.toArray(gameState);
+    const joined = fpSnake.join(gameState);
     return (
       <div style={{ columns: '400px 3' }}>
         <div className="container">
           <div className="App">
-            <Blocks items={layer0.flat()} />
+            <Blocks blocks={layer0.flat()} />
           </div>
         </div>
         <div className="container">
           <div className="App">
-            <Blocks items={layer1.flat()} />
+            <Blocks blocks={layer1.flat()} />
           </div>
         </div>
         <div className="container">
           <div className="App">
-            <Blocks items={joined.flat()} />
+            <Blocks blocks={joined.flat()} />
           </div>
         </div>
       </div>
     );
   }
 
-  renderGame() {
-    return (
-      <div className="container">
-        <div className="App">
-          {this.showHelp && (
-            <div className="help-overlay" role="dialog" aria-label="도움말">
-              <table>
-                <tbody>
-                  {HELP_ITEMS.map(({ key, action }) => (
-                    <tr key={key}>
-                      <td>{key}</td>
-                      <td>{action}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          <Blocks items={fpSnake.join(this.state).flat()} />
-        </div>
+  return (
+    <div className="container">
+      <div className="App">
+        {showHelp && (
+          <div className="help-overlay" role="dialog" aria-label="도움말">
+            <table>
+              <tbody>
+                {HELP_ITEMS.map(({ key, action }) => (
+                  <tr key={key}>
+                    <td>{key}</td>
+                    <td>{action}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <Blocks blocks={fpSnake.join(gameState).flat()} />
       </div>
-    );
-  }
-
-  render() {
-    return args.debug ? this.renderDebugMode() : this.renderGame();
-  }
+    </div>
+  );
 }
 
 export default App;
