@@ -8,7 +8,6 @@
 * [fp-snake](https://www.npmjs.com/package/fp-snake)
 * [vite](https://vite.dev/)
 * [keyboard-handler](https://github.com/emiljohansson/keyboard-handler)
-* [lodash](https://lodash.com/)
 * [react](https://react.dev/)
 
 # Debug Mode
