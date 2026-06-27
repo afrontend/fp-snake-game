@@ -38,9 +38,7 @@ function App() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!showHelpRef.current) {
-        setGameState(s => fpSnake.tick(s));
-      }
+      setGameState(s => showHelpRef.current ? s : fpSnake.tick(s));
     }, TICK_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
@@ -96,7 +94,7 @@ function App() {
     : (
       <div className="container">
         <div className="App">
-          {showHelp && (
+          {showHelp ? (
             <div className="help-overlay" role="dialog" aria-label="도움말">
               <table>
                 <tbody>
@@ -109,7 +107,7 @@ function App() {
                 </tbody>
               </table>
             </div>
-          )}
+          ) : null}
           <Blocks blocks={fpSnake.join(gameState).flat()} />
         </div>
       </div>
