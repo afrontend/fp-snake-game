@@ -1,6 +1,8 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
-import App, { getArgs, getKeySymbol } from './App';
+import App from './App';
+import { getKeySymbol } from './utils/keyMap';
+import getArgs from './utils/getArgs';
 import * as keyboard from 'keyboard-handler';
 import fpSnake from 'fp-snake';
 

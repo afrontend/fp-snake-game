@@ -2,30 +2,10 @@ import * as keyboard from 'keyboard-handler';
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import fpSnake from 'fp-snake';
-
-const KEY_CODES = {
-  SPACE: 32,
-  LEFT: 37,
-  UP: 38,
-  RIGHT: 39,
-  DOWN: 40,
-  SAVE: 83,
-  LOAD: 76,
-  HELP: 72,
-};
+import { getKeySymbol } from './utils/keyMap';
+import getArgs from './utils/getArgs';
 
 const TICK_INTERVAL_MS = 250;
-
-const keyList = [
-  { keyValue: KEY_CODES.SPACE, keySymbol: 'space' },
-  { keyValue: KEY_CODES.LEFT,  keySymbol: 'left'  },
-  { keyValue: KEY_CODES.UP,    keySymbol: 'up'    },
-  { keyValue: KEY_CODES.RIGHT, keySymbol: 'right' },
-  { keyValue: KEY_CODES.DOWN,  keySymbol: 'down'  },
-  { keyValue: KEY_CODES.SAVE,  keySymbol: 'save'  },
-  { keyValue: KEY_CODES.LOAD,  keySymbol: 'load'  },
-  { keyValue: KEY_CODES.HELP,  keySymbol: 'help'  },
-];
 
 const HELP_ITEMS = [
   { key: '← ↑ → ↓', action: '이동' },
@@ -34,22 +14,6 @@ const HELP_ITEMS = [
   { key: 'L',        action: '상태 불러오기' },
   { key: 'H',        action: '도움말 닫기' },
 ];
-
-export const getKeySymbol = (keyValue) => {
-  const found = keyList.find(key => key.keyValue === keyValue);
-  return found ? found.keySymbol : null;
-};
-
-// URL 쿼리 파라미터를 파싱해 객체로 반환한다.
-// 예: '?debug=true&speed=5' → { debug: 'true', speed: '5' }
-export const getArgs = (searchString = window.location.search) => {
-  try {
-    const params = new URLSearchParams(searchString);
-    return Object.fromEntries(params);
-  } catch (e) {
-    return {};
-  }
-};
 
 const args = getArgs();
 
