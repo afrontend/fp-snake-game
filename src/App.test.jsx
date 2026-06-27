@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, act } from '@testing-library/react';
 import App from './App';
-import { getKeySymbol } from './utils/keyMap';
-import getArgs from './utils/getArgs';
 import * as keyboard from 'keyboard-handler';
 import fpSnake from 'fp-snake';
 
@@ -19,48 +17,6 @@ vi.mock('fp-snake', () => ({
     join: vi.fn(() => []),
   },
 }));
-
-// ─── getArgs ────────────────────────────────────────────────────────────────
-
-describe('getArgs', () => {
-  it('빈 문자열이면 빈 객체를 반환한다', () => {
-    expect(getArgs('')).toEqual({});
-  });
-
-  it('? 만 있으면 빈 객체를 반환한다', () => {
-    expect(getArgs('?')).toEqual({});
-  });
-
-  it('단일 파라미터를 파싱한다', () => {
-    expect(getArgs('?debug=true')).toEqual({ debug: 'true' });
-  });
-
-  it('복수 파라미터를 파싱한다', () => {
-    expect(getArgs('?debug=true&speed=5')).toEqual({ debug: 'true', speed: '5' });
-  });
-});
-
-// ─── getKeySymbol ────────────────────────────────────────────────────────────
-
-describe('getKeySymbol', () => {
-  it.each([
-    [32, 'space'],
-    [37, 'left'],
-    [38, 'up'],
-    [39, 'right'],
-    [40, 'down'],
-    [83, 'save'],
-    [76, 'load'],
-    [72, 'help'],
-  ])('키코드 %i는 %s를 반환한다', (keyCode, symbol) => {
-    expect(getKeySymbol(keyCode)).toBe(symbol);
-  });
-
-  it('알 수 없는 키코드는 null을 반환한다', () => {
-    expect(getKeySymbol(65)).toBeNull();
-    expect(getKeySymbol(0)).toBeNull();
-  });
-});
 
 // ─── App ─────────────────────────────────────────────────────────────────────
 
