@@ -5,7 +5,7 @@ import * as keyboard from 'keyboard-handler';
 import fpSnake from 'fp-snake';
 
 vi.mock('keyboard-handler', () => ({
-  keyPressed: vi.fn(),
+  keyPressed: vi.fn(() => vi.fn()),
 }));
 
 vi.mock('fp-snake', () => ({
@@ -93,7 +93,7 @@ describe('키보드 동작', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    keyboard.keyPressed.mockImplementation(cb => { triggerKey = cb; });
+    keyboard.keyPressed.mockImplementation(cb => { triggerKey = cb; return vi.fn(); });
   });
 
   afterEach(() => {

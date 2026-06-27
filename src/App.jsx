@@ -82,7 +82,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    keyboard.keyPressed(e => {
+    const removeKeyListener = keyboard.keyPressed(e => {
       const symbol = getKeySymbol(e.which);
       if (symbol === 'help') {
         showHelpRef.current = !showHelpRef.current;
@@ -106,6 +106,7 @@ function App() {
         }
       });
     });
+    return () => removeKeyListener();
   }, []);
 
   return args.debug
