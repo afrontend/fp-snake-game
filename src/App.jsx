@@ -18,7 +18,10 @@ const HELP_ITEMS = [
 const args = getArgs();
 
 const Block = ({ color, children }) => (
-  <div className="block" style={{ backgroundColor: color }}>
+  <div
+    className={`block${color !== 'grey' ? ' block--filled' : ''}`}
+    style={color !== 'grey' ? { '--c': color } : undefined}
+  >
     {children}
   </div>
 );
