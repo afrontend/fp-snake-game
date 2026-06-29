@@ -94,6 +94,9 @@ function App() {
     : (
       <div className="container">
         <div className="App">
+          <a href="https://github.com/afrontend/fp-snake-game" title="fp-snake-game" style={{ position: 'absolute', top: 8, right: 8, zIndex: 100 }}>
+            <img style={{ width: 20, height: 20 }} src="https://agvim.files.wordpress.com/2015/08/github-mark-32px.png?w=685" alt="GitHub" />
+          </a>
           {showHelp ? (
             <div className="help-overlay" role="dialog" aria-label="도움말">
               <table>
