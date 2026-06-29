@@ -2,6 +2,12 @@
   position: relative;
 }
 
+.App-wrapper {
+  margin: auto;
+  position: relative;
+  width: calc(3vh * 15 + 2px);
+}
+
 .App {
   align-items: flex-start;
   background: #dde6ef;
@@ -12,9 +18,8 @@
     0 8px 24px rgba(0,0,0,0.12);
   display: flex;
   flex-wrap: wrap;
-  margin: auto;
   position: relative;
-  width: calc(3vh * 15 + 2px);
+  width: 100%;
 }
 
 .help-overlay {
@@ -45,6 +50,7 @@
   background: rgba(0,0,0,0.04);
   border: 1px solid rgba(0,0,0,0.05);
   border-radius: 3px;
+  box-sizing: border-box;
   font-size: 3vh;
   font-weight: bold;
   height: calc(3vh + 2px);
