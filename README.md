@@ -1,7 +1,7 @@
 # Snake Game
 > 자바스크립트로 만든 snake 게임
 
-[![snake game screenshot](https://agvim.files.wordpress.com/2019/01/fp-snake-game.png?w=100 "snake game screenshot")](https://afrontend.github.io/fp-snake-game/)
+[![snake game screenshot](https://github.com/afrontend/fp-snake-game/releases/download/screenshots/screenshot.png "snake game screenshot")](https://afrontend.github.io/fp-snake-game/)
 
 [블로그](https://agvim.wordpress.com/2019/01/22/snake-game-with-javascript/)에서 간단한 설명을 볼 수 있으며 아래 라이브러리를 사용했다.
 
