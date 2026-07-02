@@ -10,6 +10,7 @@ const TICK_INTERVAL_MS = 250;
 const HELP_ITEMS = [
   { key: '← ↑ → ↓', action: '이동' },
   { key: 'Space',    action: '일시정지 / 재개' },
+  { key: 'D',        action: '디버그 모드 전환' },
   { key: 'S',        action: '상태 저장' },
   { key: 'L',        action: '상태 불러오기' },
   { key: 'H',        action: '도움말 닫기' },
@@ -36,6 +37,7 @@ const Blocks = ({ blocks }) =>
 function App() {
   const [gameState, setGameState] = useState(() => fpSnake.init());
   const [showHelp, setShowHelp] = useState(false);
+  const [isDebug, setIsDebug] = useState(!!args.debug);
   const savedState = useRef(null);
   const showHelpRef = useRef(false);
   const appRef = useRef(null);
@@ -53,6 +55,10 @@ function App() {
       if (symbol === 'help') {
         showHelpRef.current = !showHelpRef.current;
         setShowHelp(h => !h);
+        return;
+      }
+      if (symbol === 'debug') {
+        setIsDebug(d => !d);
         return;
       }
       // setTimeout으로 다음 이벤트 루프에서 처리해
@@ -115,7 +121,7 @@ function App() {
     };
   }, []);
 
-  return args.debug
+  return isDebug
     ? (
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', padding: '12px' }}>
         <div className="container" style={{ width: 'calc(3vh * 15 + 2px)' }}>
