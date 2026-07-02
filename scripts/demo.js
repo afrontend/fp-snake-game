@@ -145,6 +145,10 @@ async function main() {
 
   await page.waitForTimeout(MOVES * AI_INTERVAL + 800);
 
+  const previewPath = path.resolve(ROOT, 'preview.png');
+  await page.screenshot({ path: previewPath });
+  console.log(`Preview screenshot saved: ${previewPath}`);
+
   const video = page.video();
   await context.close();
   await browser.close();
