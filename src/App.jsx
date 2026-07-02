@@ -16,8 +16,6 @@ const HELP_ITEMS = [
   { key: 'H',        action: '도움말 닫기' },
 ];
 
-const args = getArgs();
-
 const Block = ({ color, children }) => (
   <div
     className={`block${color !== 'grey' ? ' block--filled' : ''}`}
@@ -37,7 +35,7 @@ const Blocks = ({ blocks }) =>
 function App() {
   const [gameState, setGameState] = useState(() => fpSnake.init());
   const [showHelp, setShowHelp] = useState(false);
-  const [isDebug, setIsDebug] = useState(!!args.debug);
+  const [isDebug, setIsDebug] = useState(() => getArgs().debug !== undefined);
   const savedState = useRef(null);
   const showHelpRef = useRef(false);
   const appRef = useRef(null);
