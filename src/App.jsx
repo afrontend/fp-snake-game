@@ -117,18 +117,18 @@ function App() {
 
   return args.debug
     ? (
-      <div style={{ columns: '400px 3' }}>
-        <div className="container">
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', padding: '12px' }}>
+        <div className="container" style={{ width: 'calc(3vh * 15 + 2px)' }}>
           <div className="App">
             <Blocks blocks={fpSnake.toArray(gameState)[0].flat()} />
           </div>
         </div>
-        <div className="container">
+        <div className="container" style={{ width: 'calc(3vh * 15 + 2px)' }}>
           <div className="App">
             <Blocks blocks={fpSnake.toArray(gameState)[1].flat()} />
           </div>
         </div>
-        <div className="container">
+        <div className="container" style={{ width: 'calc(3vh * 15 + 2px)' }}>
           <div className="App">
             <Blocks blocks={fpSnake.join(gameState).flat()} />
           </div>
