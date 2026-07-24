@@ -4,6 +4,18 @@ import App from './App';
 import * as keyboard from 'keyboard-handler';
 import fpSnake from 'fp-snake';
 
+function fireTouch(el, type, x, y) {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  event.touches = [{ clientX: x, clientY: y }];
+  event.changedTouches = [{ clientX: x, clientY: y }];
+  el.dispatchEvent(event);
+}
+
+function swipe(el, x1, y1, x2, y2) {
+  fireTouch(el, 'touchstart', x1, y1);
+  fireTouch(el, 'touchend', x2, y2);
+}
+
 vi.mock('keyboard-handler', () => ({
   keyPressed: vi.fn(() => vi.fn()),
 }));
@@ -92,5 +104,78 @@ describe('키보드 동작', () => {
     act(() => { triggerKey({ which: 83 }); vi.advanceTimersByTime(0); });
     act(() => { triggerKey({ which: 76 }); vi.advanceTimersByTime(0); });
     expect(document.querySelector('.App')).toBeInTheDocument();
+  });
+});
+
+// ─── 터치/스와이프 동작 ──────────────────────────────────────────────────────
+
+describe('터치/스와이프 동작', () => {
+  function mountApp() {
+    const { unmount } = render(<App />);
+    const el = document.querySelector('.App');
+    return { el, unmount };
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    window.ontouchstart = null;
+    fpSnake.key.mockClear();
+  });
+
+  afterEach(() => {
+    delete window.ontouchstart;
+    vi.useRealTimers();
+  });
+
+  it('오른쪽으로 스와이프하면 right 이동이 호출된다', () => {
+    const { el } = mountApp();
+    act(() => { swipe(el, 0, 0, 50, 0); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).toHaveBeenCalledWith('right', expect.anything());
+  });
+
+  it('왼쪽으로 스와이프하면 left 이동이 호출된다', () => {
+    const { el } = mountApp();
+    act(() => { swipe(el, 50, 0, 0, 0); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).toHaveBeenCalledWith('left', expect.anything());
+  });
+
+  it('위로 스와이프하면 up 이동이 호출된다', () => {
+    const { el } = mountApp();
+    act(() => { swipe(el, 0, 50, 0, 0); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).toHaveBeenCalledWith('up', expect.anything());
+  });
+
+  it('아래로 스와이프하면 down 이동이 호출된다', () => {
+    const { el } = mountApp();
+    act(() => { swipe(el, 0, 0, 0, 50); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).toHaveBeenCalledWith('down', expect.anything());
+  });
+
+  it('제자리 탭(움직임 10px 미만)은 space(일시정지)로 처리된다', () => {
+    const { el } = mountApp();
+    act(() => { swipe(el, 0, 0, 2, 2); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).toHaveBeenCalledWith('space', expect.anything());
+  });
+
+  it('10~30px 사이의 애매한 움직임은 무시된다', () => {
+    const { el } = mountApp();
+    act(() => { swipe(el, 0, 0, 20, 0); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).not.toHaveBeenCalled();
+  });
+
+  it('터치를 지원하지 않는 환경에서는 스와이프가 동작하지 않는다', () => {
+    delete window.ontouchstart;
+    const { el } = mountApp();
+    act(() => { swipe(el, 0, 0, 100, 0); vi.advanceTimersByTime(0); });
+    expect(fpSnake.key).not.toHaveBeenCalled();
+  });
+
+  it('언마운트 시 터치 리스너가 정리된다', () => {
+    const { el, unmount } = mountApp();
+    const removeSpy = vi.spyOn(el, 'removeEventListener');
+    unmount();
+    expect(removeSpy).toHaveBeenCalledWith('touchstart', expect.any(Function));
+    expect(removeSpy).toHaveBeenCalledWith('touchend', expect.any(Function));
+    removeSpy.mockRestore();
   });
 });
