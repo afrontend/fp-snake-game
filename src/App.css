@@ -56,6 +56,7 @@
   height: calc(3vh + 2px);
   line-height: calc(3vh + 2px);
   text-align: center;
+  touch-action: manipulation;
   width: 3vh;
 }
 
