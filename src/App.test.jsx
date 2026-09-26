@@ -22,11 +22,15 @@ vi.mock('keyboard-handler', () => ({
 
 vi.mock('fp-snake', () => ({
   default: {
-    init: vi.fn(() => ({})),
+    init: vi.fn(() => ({ paused: false })),
     tick: vi.fn(s => s),
     key: vi.fn((_symbol, s) => s),
     toArray: vi.fn(() => [[], []]),
     join: vi.fn(() => []),
+    getLength: vi.fn(() => 1),
+    getTickInterval: vi.fn(() => 250),
+    serializeState: vi.fn(state => ({ game: 'fp-snake', version: 1, state })),
+    restoreState: vi.fn(snapshot => snapshot.state),
   },
 }));
 
@@ -47,12 +51,12 @@ describe('App', () => {
     expect(document.querySelector('.App')).toBeInTheDocument();
   });
 
-  it('언마운트 시 타이머를 정리한다', () => {
-    const clearIntervalSpy = vi.spyOn(window, 'clearInterval');
+  it('언마운트 시 카운트다운 타이머를 정리한다', () => {
+    const clearTimeoutSpy = vi.spyOn(window, 'clearTimeout');
     const { unmount } = render(<App />);
     unmount();
-    expect(clearIntervalSpy).toHaveBeenCalled();
-    clearIntervalSpy.mockRestore();
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+    clearTimeoutSpy.mockRestore();
   });
 });
 
@@ -73,6 +77,7 @@ describe('키보드 동작', () => {
 
   it('h 키를 누르면 도움말 오버레이가 표시된다', () => {
     render(<App />);
+    act(() => vi.advanceTimersByTime(3000));
     expect(document.querySelector('.help-overlay')).not.toBeInTheDocument();
     act(() => triggerKey({ which: 72 }));
     expect(document.querySelector('.help-overlay')).toBeInTheDocument();
@@ -80,6 +85,7 @@ describe('키보드 동작', () => {
 
   it('h 키를 두 번 누르면 도움말이 닫힌다', () => {
     render(<App />);
+    act(() => vi.advanceTimersByTime(3000));
     act(() => { triggerKey({ which: 72 }); triggerKey({ which: 72 }); });
     expect(document.querySelector('.help-overlay')).not.toBeInTheDocument();
   });
@@ -87,6 +93,7 @@ describe('키보드 동작', () => {
   it('도움말이 열려 있는 동안 게임 tick이 실행되지 않는다', () => {
     const tickSpy = vi.spyOn(fpSnake, 'tick');
     render(<App />);
+    act(() => vi.advanceTimersByTime(3000));
     act(() => triggerKey({ which: 72 }));
     tickSpy.mockClear();
     act(() => vi.advanceTimersByTime(1000));
@@ -96,11 +103,13 @@ describe('키보드 동작', () => {
 
   it('저장 없이 l 키를 눌러도 오류가 없다', () => {
     render(<App />);
+    act(() => vi.advanceTimersByTime(3000));
     expect(() => act(() => { triggerKey({ which: 76 }); vi.advanceTimersByTime(0); })).not.toThrow();
   });
 
   it('s 키로 저장하고 l 키로 불러올 수 있다', () => {
     render(<App />);
+    act(() => vi.advanceTimersByTime(3000));
     act(() => { triggerKey({ which: 83 }); vi.advanceTimersByTime(0); });
     act(() => { triggerKey({ which: 76 }); vi.advanceTimersByTime(0); });
     expect(document.querySelector('.App')).toBeInTheDocument();
@@ -112,6 +121,7 @@ describe('키보드 동작', () => {
 describe('터치/스와이프 동작', () => {
   function mountApp() {
     const { unmount } = render(<App />);
+    act(() => { vi.advanceTimersByTime(3000); });
     const el = document.querySelector('.App');
     return { el, unmount };
   }

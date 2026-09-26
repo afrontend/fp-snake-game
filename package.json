@@ -19,7 +19,7 @@
   },
   "private": true,
   "dependencies": {
-    "fp-snake": "^0.0.10",
+    "fp-snake": "^0.0.14",
     "keyboard-handler": "^3.0.7",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"

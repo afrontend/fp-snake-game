@@ -138,7 +138,7 @@ async function main() {
   const page = await context.newPage();
   await page.setViewportSize({ width: WIDTH, height: HEIGHT });
   await page.goto(url);
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(3200);
 
   console.log(`Injecting AI for ${MOVES} moves (~${(MOVES * AI_INTERVAL / 1000).toFixed(1)}s)...`);
   await page.evaluate(AI_SCRIPT);

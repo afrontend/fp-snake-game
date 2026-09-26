@@ -132,7 +132,7 @@ async function main() {
   const page = await browser.newPage();
   await page.setViewportSize({ width: 480, height: 640 });
   await page.goto(url);
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(3200);
 
   console.log(`Injecting AI for ${MOVES} moves...`);
   await page.evaluate(AI_SCRIPT);
