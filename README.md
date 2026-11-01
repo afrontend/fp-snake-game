@@ -61,4 +61,4 @@ URL에 `?debug=true` 쿼리 파라미터를 추가하면 디버그 모드로 실
 https://afrontend.github.io/fp-snake-game/
 
 # License
-MIT © [Bob Hwang](https://afrontend.github.io)
+MIT © [afrontend](https://afrontend.github.io)
