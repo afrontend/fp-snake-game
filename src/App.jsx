@@ -1,9 +1,8 @@
-import * as keyboard from 'keyboard-handler';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React from 'react';
 import './App.css';
 import fpSnake from 'fp-snake';
-import { getKeySymbol } from './utils/keyMap';
 import getArgs from './utils/getArgs';
+import useGame from './useGame';
 
 const HELP_ITEMS = [
   { key: '← ↑ → ↓', action: '이동' },
@@ -27,126 +26,11 @@ const Blocks = ({ blocks }) =>
   blocks.map((item, index) => <Block color={item.color} key={index} />);
 
 function App() {
-  const [gameState, setGameState] = useState(() => fpSnake.init());
-  const [showHelp, setShowHelp] = useState(false);
-  const [isDebug, setIsDebug] = useState(() => getArgs().debug !== undefined);
-  const [countdown, setCountdown] = useState(3);
-  const [message, setMessage] = useState('');
-  const savedState = useRef(null);
-  const showHelpRef = useRef(false);
-  const countdownRef = useRef(3);
-  const messageTimer = useRef(null);
-  const appRef = useRef(null);
+  const { gameState, showHelp, isDebug, countdown, message, appRef } = useGame(fpSnake, {
+    initialDebug: getArgs().debug !== undefined,
+  });
 
   const length = fpSnake.getLength(gameState);
-
-  const showStatus = useCallback((text) => {
-    setMessage(text);
-    clearTimeout(messageTimer.current);
-    messageTimer.current = setTimeout(() => setMessage(''), 2000);
-  }, []);
-
-  useEffect(() => () => clearTimeout(messageTimer.current), []);
-
-  useEffect(() => {
-    countdownRef.current = countdown;
-  }, [countdown]);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setCountdown(2), 1000),
-      setTimeout(() => setCountdown(1), 2000),
-      setTimeout(() => setCountdown(null), 3000),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, []);
-
-  useEffect(() => {
-    if (countdown !== null) return undefined;
-    const timer = setInterval(() => {
-      setGameState((state) => showHelpRef.current ? state : fpSnake.tick(state));
-    }, fpSnake.getTickInterval(gameState));
-    return () => clearInterval(timer);
-  }, [countdown]);
-
-  useEffect(() => {
-    const removeKeyListener = keyboard.keyPressed((event) => {
-      if (countdownRef.current !== null) return;
-      const symbol = getKeySymbol(event.which);
-      if (symbol === 'help') {
-        showHelpRef.current = !showHelpRef.current;
-        setShowHelp((value) => !value);
-        return;
-      }
-      if (symbol === 'debug') {
-        setIsDebug((value) => !value);
-        return;
-      }
-      if (symbol === 'save') {
-        setGameState((state) => {
-          savedState.current = fpSnake.serializeState(state);
-          return state;
-        });
-        showStatus('빠르게 저장했습니다.');
-        return;
-      }
-      if (symbol === 'load') {
-        if (!savedState.current) {
-          showStatus('저장된 상태가 없습니다.');
-          return;
-        }
-        try {
-          setGameState(fpSnake.restoreState(savedState.current));
-          showStatus('저장된 상태를 불러왔습니다.');
-        } catch (error) {
-          console.error(error);
-          showStatus('저장된 상태를 불러올 수 없습니다.');
-        }
-        return;
-      }
-      if (showHelpRef.current) return;
-      setTimeout(() => {
-        setGameState((state) => (symbol ? fpSnake.key(symbol, state) : state));
-      });
-    });
-    return () => removeKeyListener();
-  }, [showStatus]);
-
-  useEffect(() => {
-    const element = appRef.current;
-    if (!element || !('ontouchstart' in window)) return undefined;
-    let startX = 0;
-    let startY = 0;
-    const onTouchStart = (event) => {
-      startX = event.touches[0].clientX;
-      startY = event.touches[0].clientY;
-      event.preventDefault();
-    };
-    const onTouchEnd = (event) => {
-      if (countdownRef.current !== null || showHelpRef.current) return;
-      const dx = event.changedTouches[0].clientX - startX;
-      const dy = event.changedTouches[0].clientY - startY;
-      const absDx = Math.abs(dx);
-      const absDy = Math.abs(dy);
-      let symbol = null;
-      if (absDx < 10 && absDy < 10) symbol = 'space';
-      else if (Math.max(absDx, absDy) > 30) {
-        symbol = absDx > absDy
-          ? (dx > 0 ? 'right' : 'left')
-          : (dy > 0 ? 'down' : 'up');
-      }
-      if (symbol) {
-        setTimeout(() => setGameState((state) => fpSnake.key(symbol, state)));
-      }
-      event.preventDefault();
-    };
-    element.addEventListener('touchstart', onTouchStart, { passive: false });
-    element.addEventListener('touchend', onTouchEnd, { passive: false });
-    return () => {
-      element.removeEventListener('touchstart', onTouchStart);
-      element.removeEventListener('touchend', onTouchEnd);
-    };
-  }, [isDebug]);
 
   if (isDebug) {
     const panels = [...fpSnake.toArray(gameState), fpSnake.join(gameState)];
